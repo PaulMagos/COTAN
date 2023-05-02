@@ -20,6 +20,11 @@ setGeneric(
   }
 )
 
+setGeneric(
+  "calculateCoexDE",
+  function(objCOTAN, geneSets) standardGeneric("calculateCoexDE")
+)
+
 #-------------------------------------- getters
 
 setGeneric(
