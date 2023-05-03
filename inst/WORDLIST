@@ -80,10 +80,10 @@ expectedYN
 expectedYY
 factoextra
 findClustersMarkers
-findFullyExpressedCells
-findHousekeepingGenes
-flagNotFullyExpressedCells
-flagNotHousekeepingGenes
+findFullyExpressedGenes
+findFullyExpressingCells
+flagNotFullyExpressedGenes
+flagNotFullyExpressingCells
 funProbZero
 geneSetEnrichment
 genesCoexSpace
@@ -98,11 +98,11 @@ getClustersCoex
 getColorsVector
 getDims
 getDispersion
-getFullyExpressedCells
+getFullyExpressedGenes
+getFullyExpressingCells
 getGenes
 getGenesCoex
 getGenesSize
-getHousekeepingGenes
 getLambda
 getMetadataCells
 getMetadataDataset
@@ -150,7 +150,7 @@ plotTheme
 pre
 proceedToCoex
 rankGenes
-sc
+scRNA
 scCOTAN
 scatterPlot
 seriph

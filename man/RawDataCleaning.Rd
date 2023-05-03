@@ -4,18 +4,18 @@
 %   R/mitochondrialPercentage-plot.R, R/scatter-plot.R
 \name{RawDataCleaning}
 \alias{RawDataCleaning}
-\alias{flagNotHousekeepingGenes,COTAN-method}
-\alias{flagNotHousekeepingGenes}
-\alias{flagNotFullyExpressedCells,COTAN-method}
-\alias{flagNotFullyExpressedCells}
-\alias{getHousekeepingGenes,COTAN-method}
-\alias{getHousekeepingGenes}
-\alias{getFullyExpressedCells,COTAN-method}
-\alias{getFullyExpressedCells}
-\alias{findHousekeepingGenes,COTAN-method}
-\alias{findHousekeepingGenes}
-\alias{findFullyExpressedCells,COTAN-method}
-\alias{findFullyExpressedCells}
+\alias{flagNotFullyExpressedGenes,COTAN-method}
+\alias{flagNotFullyExpressedGenes}
+\alias{flagNotFullyExpressingCells,COTAN-method}
+\alias{flagNotFullyExpressingCells}
+\alias{getFullyExpressedGenes,COTAN-method}
+\alias{getFullyExpressedGenes}
+\alias{getFullyExpressingCells,COTAN-method}
+\alias{getFullyExpressingCells}
+\alias{findFullyExpressedGenes,COTAN-method}
+\alias{findFullyExpressedGenes}
+\alias{findFullyExpressingCells,COTAN-method}
+\alias{findFullyExpressingCells}
 \alias{dropGenesCells,COTAN-method}
 \alias{dropGenesCells}
 \alias{ECDPlot}
@@ -28,23 +28,29 @@
 \alias{scatterPlot}
 \title{Raw data cleaning}
 \usage{
-\S4method{flagNotHousekeepingGenes}{COTAN}(objCOTAN)
+\S4method{flagNotFullyExpressedGenes}{COTAN}(objCOTAN)
 
-\S4method{flagNotFullyExpressedCells}{COTAN}(objCOTAN)
+\S4method{flagNotFullyExpressingCells}{COTAN}(objCOTAN)
 
-\S4method{getHousekeepingGenes}{COTAN}(objCOTAN)
+\S4method{getFullyExpressedGenes}{COTAN}(objCOTAN)
 
-\S4method{getFullyExpressedCells}{COTAN}(objCOTAN)
+\S4method{getFullyExpressingCells}{COTAN}(objCOTAN)
 
-\S4method{findHousekeepingGenes}{COTAN}(objCOTAN)
+\S4method{findFullyExpressedGenes}{COTAN}(objCOTAN, cellsThreshold = 0.99)
 
-\S4method{findFullyExpressedCells}{COTAN}(objCOTAN)
+\S4method{findFullyExpressingCells}{COTAN}(objCOTAN, genesThreshold = 0.99)
 
 \S4method{dropGenesCells}{COTAN}(objCOTAN, genes = c(), cells = c())
 
 ECDPlot(objCOTAN, yCut)
 
-\S4method{clean}{COTAN}(objCOTAN)
+\S4method{clean}{COTAN}(
+  objCOTAN,
+  cellsCutoff = 0.003,
+  genesCutoff = 0.002,
+  cellsThreshold = 0.99,
+  genesThreshold = 0.99
+)
 
 cleanPlots(objCOTAN)
 
@@ -64,11 +70,27 @@ scatterPlot(objCOTAN, splitPattern = " ", numCol = 2L, splitSamples = FALSE)
 \arguments{
 \item{objCOTAN}{a \code{COTAN} object}
 
+\item{cellsThreshold}{any gene that is expressed in more cells than threshold
+times the total number of cells will be marked as \strong{fully-expressed}.
+Default threshold is \eqn{0.99 \; (99.0\%)}}
+
+\item{genesThreshold}{any cell that is expressing more genes than threshold
+times the total number of genes will be marked as \strong{fully-expressing}.
+Default threshold is \eqn{0.99 \; (99.0\%)}}
+
 \item{genes}{an array of gene names}
 
 \item{cells}{an array of cell names}
 
 \item{yCut}{y threshold of library size to drop}
+
+\item{cellsCutoff}{\code{clean()} will delete from the \code{raw} data any gene that is
+expressed in less cells than threshold times the total number of cells.
+Default cutoff is \eqn{0.003 \; (0.3\%)}}
+
+\item{genesCutoff}{\code{clean()} will delete from the \code{raw} data any cell that is
+expressing less genes than threshold times the total number of genes.
+Default cutoff is \eqn{0.002 \; (0.2\%)}}
 
 \item{splitPattern}{Pattern used to extract, from the column names, the
 sample field (default " ")}
@@ -83,23 +105,23 @@ Human, mouse "^mt-")}
 (default \code{FALSE})}
 }
 \value{
-\code{flagNotHousekeepingGenes()} returns a Booleans array with TRUE for
-genes that are not housekeeping
+\code{flagNotFullyExpressedGenes()} returns a Booleans array with TRUE
+for genes that are not fully-expressed
 
-\code{flagNotFullyExpressedCells()} returns an array of Booleans with
-TRUE for cells that are not fully expressed
+\code{flagNotFullyExpressingCells()} returns an array of Booleans with
+TRUE for cells that are not expressing all genes
 
-\code{getHousekeepingGenes()} returns an array containing all genes
+\code{getFullyExpressedGenes()} returns an array containing all genes
 that are expressed in all cells
 
-\code{getFullyExpressedCells()} returns an array containing all cells
+\code{getFullyExpressingCells()} returns an array containing all cells
 that express all genes
 
-\code{findHousekeepingGenes()} returns the given \code{COTAN} object with
-updated housekeeping genes' information
+\code{findFullyExpressedGenes()} returns the given \code{COTAN} object with
+updated \strong{fully-expressed} genes' information
 
-\code{findFullyExpressedCells()} returns the given \code{COTAN} object with
-updated fully expressed cells' information
+\code{findFullyExpressingCells()} returns the given \code{COTAN} object  with
+updated \strong{fully-expressing} cells' information
 
 \code{dropGenesCells()} returns a completely new \code{COTAN} object with the
 new raw data obtained after the indicated genes/cells were expunged. Only
@@ -136,29 +158,29 @@ These methods are to be used to clean the raw data. That is drop
 any number of genes/cells that are too sparse or too present to allow
 proper calibration of the \code{COTAN} model.
 
-We call genes that are expressed in all cells \emph{House Keeping} while cells
-that express all genes in the data are called \emph{Fully Expressed}. In case it
-has been made quite easy to exclude the flagged genes/cells in the user
+We call genes that are expressed in all cells \emph{Fully-Expressed} while cells
+that express all genes in the data are called \emph{Fully-Expressing}. In case
+it has been made quite easy to exclude the flagged genes/cells in the user
 calculations.
 }
 \details{
-\code{flagNotHousekeepingGenes()} returns a Boolean array with TRUE for
-those genes that are not housekeeping.
+\code{flagNotFullyExpressedGenes()} returns a Boolean array with TRUE for
+those genes that are not fully-expressed.
 
-\code{flagNotFullyExpressedCells()}returns a Boolean vector with TRUE for
-those cells that are not fully expressed
+\code{flagNotFullyExpressingCells()}returns a Boolean vector with TRUE
+for those cells that are not expressing all genes
 
-\code{getHousekeepingGenes()} returns the genes expressed in all cells of
-the dataset
+\code{getFullyExpressedGenes()} returns the genes expressed in all cells
+of the dataset
 
-\code{getFullyExpressedCells()} returns the cells that did express
+\code{getFullyExpressingCells()} returns the cells that did express
 all genes of the dataset
 
-\code{findHousekeepingGenes()} determines the housekeeping genes inside
-the raw data
-
-\code{findFullyExpressedCells()} determines the fully expressed cells
+\code{findFullyExpressedGenes()} determines the fully-expressed genes
 inside the raw data
+
+\code{findFullyExpressingCells()} determines the cells that are
+expressing all genes in the dataset
 
 \code{dropGenesCells()} removes an array of genes and/or cells from the
 current \code{COTAN} object.
@@ -197,15 +219,15 @@ objCOTAN <- dropGenesCells(objCOTAN, genes.to.rem, cells.to.rem)
 
 objCOTAN <- clean(objCOTAN)
 
-objCOTAN <- findHousekeepingGenes(objCOTAN)
-goodPos <- flagNotHousekeepingGenes(objCOTAN)
+objCOTAN <- findFullyExpressedGenes(objCOTAN)
+goodPos <- flagNotFullyExpressedGenes(objCOTAN)
 
-objCOTAN <- findFullyExpressedCells(objCOTAN)
-goodPos <- flagNotFullyExpressedCells(objCOTAN)
+objCOTAN <- findFullyExpressingCells(objCOTAN)
+goodPos <- flagNotFullyExpressingCells(objCOTAN)
 
-hkGenes <- getHousekeepingGenes(objCOTAN)
+feGenes <- getFullyExpressedGenes(objCOTAN)
 
-feCells <- getFullyExpressedCells(objCOTAN)
+feCells <- getFullyExpressingCells(objCOTAN)
 
 ## These plots might help to identify genes/cells that need to be dropped
 plot <- ECDPlot(objCOTAN, yCut = 100)

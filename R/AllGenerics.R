@@ -123,23 +123,23 @@ setGeneric(
 )
 
 setGeneric(
-  "flagNotHousekeepingGenes",
-  function(objCOTAN) standardGeneric("flagNotHousekeepingGenes")
+  "flagNotFullyExpressedGenes",
+  function(objCOTAN) standardGeneric("flagNotFullyExpressedGenes")
 )
 
 setGeneric(
-  "flagNotFullyExpressedCells",
-  function(objCOTAN) standardGeneric("flagNotFullyExpressedCells")
+  "flagNotFullyExpressingCells",
+  function(objCOTAN) standardGeneric("flagNotFullyExpressingCells")
 )
 
 setGeneric(
-  "getHousekeepingGenes",
-  function(objCOTAN) standardGeneric("getHousekeepingGenes")
+  "getFullyExpressedGenes",
+  function(objCOTAN) standardGeneric("getFullyExpressedGenes")
 )
 
 setGeneric(
-  "getFullyExpressedCells",
-  function(objCOTAN) standardGeneric("getFullyExpressedCells")
+  "getFullyExpressingCells",
+  function(objCOTAN) standardGeneric("getFullyExpressingCells")
 )
 
 setGeneric(
@@ -195,13 +195,17 @@ setGeneric(
 )
 
 setGeneric(
-  "findHousekeepingGenes",
-  function(objCOTAN) standardGeneric("findHousekeepingGenes")
+  "findFullyExpressedGenes",
+  function(objCOTAN, cellsThreshold = 0.99) {
+    standardGeneric("findFullyExpressedGenes")
+  }
 )
 
 setGeneric(
-  "findFullyExpressedCells",
-  function(objCOTAN) standardGeneric("findFullyExpressedCells")
+  "findFullyExpressingCells",
+  function(objCOTAN, genesThreshold = 0.99) {
+    standardGeneric("findFullyExpressingCells")
+  }
 )
 
 setGeneric(
@@ -211,7 +215,11 @@ setGeneric(
 
 setGeneric(
   "clean",
-  function(objCOTAN) standardGeneric("clean")
+  function(objCOTAN,
+           cellsCutoff = 0.003, genesCutoff = 0.002,
+           cellsThreshold = 0.99, genesThreshold = 0.99) {
+    standardGeneric("clean")
+  }
 )
 
 setGeneric(
