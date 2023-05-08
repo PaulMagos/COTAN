@@ -1,13 +1,20 @@
-## COTAN 2.0.1
+## COTAN 2.1.2
+
+Fixed bug in `proceedToCoex()` in cases when `saveObj == TRUE`
+
+## COTAN 2.1.1
 
 Updated `README.md` and `NEWS.md`
 
 Renamed methods dealing with housekeeping genes and fully-expressed cells to use
 the more proper names fully-expressed genes and fully-expressing cells
 
-## COTAN 2.0.0
+Added possibility to users to set the cutoff and thresholds used by the `clean`
+and related methods
 
-Final release in Bioconductor 3.17
+## COTAN 2.1.0
+
+First release in Bioconductor 3.18
 
 ## COTAN 1.99.4
 
