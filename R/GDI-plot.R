@@ -7,8 +7,8 @@
 #' @param objCOTAN a `COTAN` object
 #' @param genes a named `list` of genes to label. Each array will have different
 #'   color.
-#' @param cond a string corresponding to the condition/sample (it is used only
-#'   for the title).
+#' @param condition a string corresponding to the condition/sample (it is used
+#'   only for the title).
 #' @param statType type of statistic to be used. Default is "S": Pearson's
 #'   chi-squared test statistics. "G" is G-test statistics
 #' @param GDIThreshold the threshold level that discriminates uniform clusters.
@@ -41,7 +41,7 @@
 #'
 #' @rdname UniformClusters
 #'
-GDIPlot <- function(objCOTAN, genes, cond = "",
+GDIPlot <- function(objCOTAN, genes, condition = "",
                     statType = "S", GDIThreshold = 1.4,
                     GDIIn = NULL) {
   logThis("GDI plot", logLevel = 2L)
@@ -75,6 +75,11 @@ GDIPlot <- function(objCOTAN, genes, cond = "",
 
   labelledGenes <- GDIDf[["colors"]] != "none"
 
+  if (isEmptyName(condition)) {
+    condition <- getMetadataElement(objCOTAN, datasetTags()[["cond"]])
+  }
+  title <- paste0("GDI plot - ", condition)
+
   plot <- ggplot(subset(GDIDf, colors == "none"),
                  aes(x = sum.raw.norm, y = GDI)) +
           geom_point(alpha = 0.3, color = "#8491B4B2", size = 2.5) +
@@ -96,7 +101,7 @@ GDIPlot <- function(objCOTAN, genes, cond = "",
                            label = rownames(GDIDf)[labelledGenes],
                            label.size = NA, max.overlaps = 40L, alpha = 0.8,
                            direction = "both", na.rm = TRUE, seed = 1234L) +
-          ggtitle(paste("GDI plot ", cond)) +
+          ggtitle(title) +
           plotTheme("GDI", textSize = 10L)
 
   return(plot)

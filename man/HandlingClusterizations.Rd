@@ -23,6 +23,7 @@
 \alias{UMAPPlot}
 \alias{clustersDeltaExpression}
 \alias{clustersMarkersHeatmapPlot}
+\alias{clustersSummaryData}
 \alias{clustersSummaryPlot}
 \alias{clustersTreePlot}
 \alias{findClustersMarkers}
@@ -58,12 +59,29 @@ clustersDeltaExpression(objCOTAN, clusters = NULL, clName = "")
 clustersMarkersHeatmapPlot(
   objCOTAN,
   groupMarkers,
-  clName = NULL,
+  clName = "",
+  clusters = NULL,
   kCuts = 3,
+  condNameList = NULL,
   conditionsList = NULL
 )
 
-clustersSummaryPlot(objCOTAN, condition = NULL, clName = "", plotTitle = "")
+clustersSummaryData(
+  objCOTAN,
+  clName = "",
+  clusters = NULL,
+  condName = "",
+  conditions = NULL
+)
+
+clustersSummaryPlot(
+  objCOTAN,
+  clName = "",
+  clusters = NULL,
+  condName = "",
+  conditions = NULL,
+  plotTitle = ""
+)
 
 clustersTreePlot(
   objCOTAN,
@@ -89,11 +107,11 @@ geneSetEnrichment(clustersCoex, groupMarkers)
 \arguments{
 \item{objCOTAN}{a \code{COTAN} object}
 
-\item{dropNoCoex}{When \code{TRUE} drops the names from the clusterizations with
+\item{dropNoCoex}{When \code{TRUE} drops the names from the \emph{clusterizations} with
 empty associated coex \code{data.frame}}
 
 \item{keepPrefix}{When \code{TRUE} returns the internal name of the
-clusterization: the one with the \code{CL_} prefix.}
+\emph{clusterization}: the one with the \code{CL_} prefix.}
 
 \item{clName}{The name of the \emph{clusterization}. If not given the last
 available \emph{clusterization} will be returned, as it is probably the most
@@ -122,13 +140,20 @@ specified}
 \item{kCuts}{the number of estimated \emph{cluster} (this defines the height for
 the tree cut)}
 
-\item{conditionsList}{a list of \code{data.frames} coming from the
-\code{\link[=clustersSummaryPlot]{clustersSummaryPlot()}} function}
+\item{condNameList}{a \code{list} of \emph{conditions}' names to be used for additional
+columns in the final plot When none are given no new columns will be added
+using data extracted via the function \code{\link[=clustersSummaryData]{clustersSummaryData()}}}
 
-\item{condition}{the name of a column in the \code{metaCells} \code{data.frame}
-containing the \emph{condition}. This allows to further separate the cells in
-more sub-groups. When not given condition is assumed to be the same for all
-cells.}
+\item{conditionsList}{a \code{list} of \emph{conditions} to use. If given they will
+take precedence on the ones indicated by \code{condNameList}}
+
+\item{condName}{The name of a condition in the \code{COTAN} object to further
+separate the cells in more sub-groups. When no condition is given it is
+assumed to be the same for all cells (no further sub-divisions)}
+
+\item{conditions}{The \emph{conditions} to use. If given it will take precedence
+on the one indicated by \code{condName} that will only indicate the relevant
+column name in the returned \code{data.frame}}
 
 \item{plotTitle}{The title to use for the returned plot}
 
@@ -194,6 +219,21 @@ model expectations
 \item "dataScore" the \code{data.frame} with the score values
 }
 
+\code{clustersSummaryData()} returns a \code{data.frame}  with the following
+statistics: The calculated statistics are:
+\itemize{
+\item \code{clName} the \emph{cluster} \strong{labels}
+\item \code{condName} the relevant condition (to further sub-divide the \emph{clusters})
+\item "CellNumber" the number of cells in the group
+\item "MeanUDE" the average "UDE" in the group of cells
+\item "MedianUDE" the median "UDE" in the group of cells
+\item "ExpGenes25" the number of genes expressed in at the least 25\% of the
+cells in the group
+\item "ExpGenes" the number of genes expressed at the least once in any of the
+cells in the group
+\item "CellPercentage" fraction of the cells with respect to the total cells
+}
+
 \code{clustersSummaryPlot()} returns a \code{list} with a \code{data.frame} and a
 \code{ggplot} objects
 \itemize{
@@ -221,7 +261,7 @@ A \emph{clusterization} is any partition of the cells where to each cell it is
 assigned a \strong{label}; a group of cells with the same label is called
 \emph{cluster}.
 
-For each cluster is also possible to define a \code{COEX} value for each gene,
+For each \emph{cluster} is also possible to define a \code{COEX} value for each gene,
 indicating its increased or decreased expression in the \emph{cluster} compared
 to the whole background. A \code{data.frame} with these values listed in a
 column for each \emph{cluster} is stored separately for each \emph{clusterization} in
@@ -273,26 +313,16 @@ data set.
 \code{clustersMarkersHeatmapPlot()} returns the heatmap plot of a summary
 score for each \emph{cluster} and each gene marker list in the given
 \emph{clusterization}. It also returns the numerosity and percentage of each
-\emph{cluster} on the right and a gene clusterization dendogram on the left (as
-returned by the function \code{\link[=geneSetEnrichment]{geneSetEnrichment()}}) that allows to estimate
+\emph{cluster} on the right and a gene \emph{clusterization} dendogram on the left
+(as returned by the function \code{\link[=geneSetEnrichment]{geneSetEnrichment()}}) that allows to estimate
 which markers groups are more or less expressed in each \emph{cluster} so it is
 easier to derive the \emph{clusters}' cell types.
 
+\code{clustersSummaryData()} calculates various statistics about each
+cluster (with an optional further \code{condition} to separate the cells).
+
 \code{clustersSummaryPlot()} calculates various statistics about each
-cluster (with an optional further \code{condition} to separate the cells) and
-puts them together into a plot. The calculated statistics are:
-\itemize{
-\item "Cluster" the \emph{cluster} \strong{label}
-\item "Condition" the further element to sub-divide the clusters
-\item "CellNumber" the number of cells in the group
-\item "MeanUDE" the average "UDE" in the group of cells
-\item "MedianUDE" the median "UDE" in the group of cells
-\item "ExpGenes25" the number of genes expressed in at the least 25\% of the
-cells in the group
-\item "ExpGenes" the number of genes expressed at the least once in any of the
-cells in the group
-\item "CellPercentage" fraction of the cells with respect to the total cells
-}
+cluster via \code{\link[=clustersSummaryData]{clustersSummaryData()}} and puts them together into a plot.
 
 \code{clustersTreePlot()} returns the \code{dendogram} plot where the given
 \emph{clusters} are placed on the base of their relative distance. Also if
@@ -328,6 +358,7 @@ groupMarkers <- list(G1 = c("g-000010", "g-000020", "g-000030"),
                             "g-000570", "g-000590"))
 
 umapPlot <- UMAPPlot(coexDF, clusters = NULL, elements = groupMarkers)
+plot(umapPlot)
 
 objCOTAN <- addClusterization(objCOTAN, clName = "first_clusterization",
                               clusters = clusters, coexDF = coexDF)
@@ -339,7 +370,18 @@ clusterizations <- getClusterizations(objCOTAN, dropNoCoex = TRUE)
 enrichment <- geneSetEnrichment(clustersCoex = coexDF,
                                 groupMarkers = groupMarkers)
 
-##clHeatmapPlot <- clustersMarkersHeatmapPlot(objCOTAN, groupMarkers)
+clHeatmapPlotAndData <- clustersMarkersHeatmapPlot(objCOTAN, groupMarkers)
+##plot(clHeatmapPlotAndData[["heatmapPlot"]])
+
+conditions <- as.integer(substring(getCells(objCOTAN), 3L))
+conditions <- factor(ifelse(conditions <= 600, "L", "H"))
+names(conditions) <- getCells(objCOTAN)
+
+clHeatmapPlotAndData2 <-
+  clustersMarkersHeatmapPlot(objCOTAN, groupMarkers, kCuts = 2,
+                             condNameList = list("High/Low"),
+                             conditionsList = list(conditions))
+##plot(clHeatmapPlotAndData2[["heatmapPlot"]])
 
 clName <- getClusterizationName(objCOTAN)
 
@@ -350,9 +392,14 @@ allClustersCoexDF <- getClustersCoex(objCOTAN)
 
 deltaExpression <- clustersDeltaExpression(objCOTAN, clusters)
 
-dataAndPlot <- clustersSummaryPlot(objCOTAN)
+summaryData <- clustersSummaryData(objCOTAN)
 
-treePlot <- clustersTreePlot(objCOTAN, 2)
+dataAndPlot <- clustersSummaryPlot(objCOTAN)
+plot(dataAndPlot[["plot"]])
+
+treePlotAndObj <- clustersTreePlot(objCOTAN, 2)
+objCOTAN <- treePlotAndObj[["objCOTAN"]]
+plot(treePlotAndObj[["dend"]])
 
 clMarkers <- findClustersMarkers(objCOTAN, clusters = clusters)
 

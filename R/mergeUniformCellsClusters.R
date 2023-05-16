@@ -6,12 +6,13 @@
 #'   would form a **uniform** *cluster* still. This function uses the *cosine
 #'   distance* and the [stats::hclust()] function to establish *near clusters
 #'   pairs*. It will use the [checkClusterUniformity()] function to check
-#'   whether the merged *clusters* are **uniform**. The function will stop once no
-#'   *near pairs* of clusters are mergeable.
+#'   whether the merged *clusters* are **uniform**. The function will stop once
+#'   no *near pairs* of clusters are mergeable.
 #'
 #' @param objCOTAN a `COTAN` object
-#' @param clusters The clusterization to merge. If not given the last available
-#'   clusterization will be used, as it is probably the most significant!
+#' @param clusters The *clusterization* to merge. If not given the last
+#'   available *clusterization* will be used, as it is probably the most
+#'   significant!
 #' @param GDIThreshold the threshold level that discriminates uniform clusters.
 #'   It defaults to \eqn{1.4}
 #' @param cores number cores used
@@ -57,11 +58,18 @@
 #'                      G3 = c("g-000510", "g-000530", "g-000550",
 #'                             "g-000570", "g-000590"))
 #' gdiPlot <- GDIPlot(objCOTAN, genes = groupMarkers, cond = "test")
+#' plot(gdiPlot)
 #'
+#' ## Here we override the default GDI threshold as a way to speed-up
+#' ## calculations as higher threshold implies less stringent uniformity
+#' ## It real applications it might be appropriate to change the threshold
+#' ## in cases of relatively low genes/cells number, or in cases when an
+#' ## rough clusterization is needed in the early satges of the analysis
+#' ##
 #' clusters <- cellsUniformClustering(objCOTAN, cores = 12,
-#'                                    saveObj = FALSE)
+#'                                    GDIThreshold = 1.5, saveObj = FALSE)
 #'
-#' checkClusterUniformity(objCOTAN,
+#' checkClusterUniformity(objCOTAN, GDIThreshold = 1.5,
 #'                        cluster = clusters[1],
 #'                        cells = getCells(objCOTAN)[clusters %in% clusters[1]],
 #'                        cores = 12,
@@ -70,7 +78,7 @@
 #' objCOTAN <- addClusterization(objCOTAN, clName = "uniformClusters",
 #'                               clusters = clusters)
 #'
-#' mergedList <- mergeUniformCellsClusters(objCOTAN,
+#' mergedList <- mergeUniformCellsClusters(objCOTAN, GDIThreshold = 1.5,
 #'                                         clusters = clusters,
 #'                                         cores = 12,
 #'                                         distance = "cosine",
@@ -99,6 +107,8 @@ mergeUniformCellsClusters <- function(objCOTAN,
     # pick the last clusterization
     outputClusters <- getClusterizationData(objCOTAN)[["clusters"]]
   }
+
+  outputClusters <- factorToVector(outputClusters)
 
   cond <- getMetadataElement(objCOTAN, datasetTags()[["cond"]])
 
@@ -138,7 +148,6 @@ mergeUniformCellsClusters <- function(objCOTAN,
     }
 
     hcNorm <- hclust(coexDist, method = hclustMethod)
-    #plot(hcNorm)
 
     dend <- as.dendrogram(hcNorm)
 
@@ -230,6 +239,8 @@ mergeUniformCellsClusters <- function(objCOTAN,
     colnames(coexDF)   <- clTagsMap[colnames(coexDF)]
     colnames(pValueDF) <- clTagsMap[colnames(pValueDF)]
   }
+
+  outputClusters <- factor(outputClusters)
 
   logThis("Merging cells' uniform clustering: DONE", logLevel = 2L)
 

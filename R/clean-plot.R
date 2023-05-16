@@ -46,7 +46,12 @@
 #' @importFrom graphics title
 #'
 #' @examples
-#' plots <- cleanPlots(objCOTAN)
+#' # This creates many infomative plots useful to determine whether
+#' # there is still something to drop...
+#' # Here we use the tuple-like assignment feature of the `zeallot` package
+#' c(pcaCellsPlot, ., genesPlot, UDEPlot, nuPlot ) %<-% cleanPlots(objCOTAN)
+#' plot(pcaCellsPlot)
+#' plot(UDEPlot)
 #'
 #' @rdname RawDataCleaning
 #'

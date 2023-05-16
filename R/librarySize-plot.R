@@ -119,6 +119,7 @@ geom_flat_violin <- function(
 #'
 #' @examples
 #' lsPlot <- cellSizePlot(objCOTAN)
+#' plot(lsPlot)
 #'
 #' @rdname RawDataCleaning
 #'
@@ -152,7 +153,7 @@ cellSizePlot <- function(objCOTAN, splitPattern = " ", numCol = 2L) {
     labs(title = "Cell library size",
          y = "Size (read number)",
          x = "") +
-    scale_y_continuous(expand = c(0L, 0L)) +
+    # scale_y_continuous(expand = c(0L, 0L)) +
     ylim(0.0, max(sizes[["sizes"]])) +
     plotTheme("size-plot")
 
@@ -187,6 +188,7 @@ cellSizePlot <- function(objCOTAN, splitPattern = " ", numCol = 2L) {
 #'
 #' @examples
 #' gsPlot <- genesSizePlot(objCOTAN)
+#' plot(gsPlot)
 #'
 #' @rdname RawDataCleaning
 #'
@@ -220,7 +222,7 @@ genesSizePlot <- function(objCOTAN, splitPattern = " ", numCol = 2L) {
     labs(title = "Detected gene number",
          y = "Size (number of genes)",
          x = "") +
-    scale_y_continuous(expand = c(0L, 0L)) +
+    # scale_y_continuous(expand = c(0L, 0L)) +
     ylim(0L, max(sizes[["sizes"]])) +
     plotTheme("size-plot")
 

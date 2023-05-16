@@ -40,7 +40,8 @@ test_that("'scCOTAN' converters",{
   obj <- calculateCoex(obj, actOnCells = FALSE, optimizeForSpeed = FALSE)
 
   coexDF <- set_names(
-    as.data.frame(atan(getNormalizedData(obj)[,1:2]-0.5)/pi*2), c(1, 2))
+    as.data.frame(atan(getNormalizedData(obj)[, 1:2] - 0.5) / pi * 2.0),
+    c(1, 2))
 
   obj <- addClusterization(obj, clName = "clusters",
                            clusters = rep(colnames(coexDF), 10),
@@ -61,7 +62,8 @@ test_that("'scCOTAN' converters",{
   expect_null(obj_sc@yes_yes)
   expect_length(obj_sc@clusters, ncol(obj_sc@raw))
   if (!all(is.na(obj_sc@clusters))) {
-    expect_equal(obj_sc@clusters, getClusterizationData(obj)[["clusters"]])
+    expect_equal(obj_sc@clusters,
+                 factorToVector(getClusterizationData(obj)[["clusters"]]))
     expect_equal(obj_sc@cluster_data, getClusterizationData(obj)[["coex"]])
   } else {
     expect_length(obj_sc@cluster_data, 0)

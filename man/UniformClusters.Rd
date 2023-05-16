@@ -12,7 +12,7 @@
 GDIPlot(
   objCOTAN,
   genes,
-  cond = "",
+  condition = "",
   statType = "S",
   GDIThreshold = 1.4,
   GDIIn = NULL
@@ -54,8 +54,8 @@ mergeUniformCellsClusters(
 \item{genes}{a named \code{list} of genes to label. Each array will have different
 color.}
 
-\item{cond}{a string corresponding to the condition/sample (it is used only
-for the title).}
+\item{condition}{a string corresponding to the condition/sample (it is used
+only for the title).}
 
 \item{statType}{type of statistic to be used. Default is "S": Pearson's
 chi-squared test statistics. "G" is G-test statistics}
@@ -81,8 +81,9 @@ output will be paced in a sub-folder.}
 
 \item{cells}{the cells in the cluster}
 
-\item{clusters}{The clusterization to merge. If not given the last available
-clusterization will be used, as it is probably the most significant!}
+\item{clusters}{The \emph{clusterization} to merge. If not given the last
+available \emph{clusterization} will be used, as it is probably the most
+significant!}
 
 \item{distance}{type of distance to use. It defaults to \code{"cosine"}, but
 \code{"euclidean"} is also available)}
@@ -131,8 +132,8 @@ too high for too many genes, the cluster is deemed \strong{non-uniform}.
 would form a \strong{uniform} \emph{cluster} still. This function uses the \emph{cosine
 distance} and the \code{\link[stats:hclust]{stats::hclust()}} function to establish \emph{near clusters
 pairs}. It will use the \code{\link[=checkClusterUniformity]{checkClusterUniformity()}} function to check
-whether the merged \emph{clusters} are \strong{uniform}. The function will stop once no
-\emph{near pairs} of clusters are mergeable.
+whether the merged \emph{clusters} are \strong{uniform}. The function will stop once
+no \emph{near pairs} of clusters are mergeable.
 }
 \examples{
 data("test.dataset")
@@ -149,11 +150,18 @@ groupMarkers <- list(G1 = c("g-000010", "g-000020", "g-000030"),
                      G3 = c("g-000510", "g-000530", "g-000550",
                             "g-000570", "g-000590"))
 gdiPlot <- GDIPlot(objCOTAN, genes = groupMarkers, cond = "test")
+plot(gdiPlot)
 
+## Here we override the default GDI threshold as a way to speed-up
+## calculations as higher threshold implies less stringent uniformity
+## It real applications it might be appropriate to change the threshold
+## in cases of relatively low genes/cells number, or in cases when an
+## rough clusterization is needed in the early satges of the analysis
+##
 clusters <- cellsUniformClustering(objCOTAN, cores = 12,
-                                   saveObj = FALSE)
+                                   GDIThreshold = 1.5, saveObj = FALSE)
 
-checkClusterUniformity(objCOTAN,
+checkClusterUniformity(objCOTAN, GDIThreshold = 1.5,
                        cluster = clusters[1],
                        cells = getCells(objCOTAN)[clusters \%in\% clusters[1]],
                        cores = 12,
@@ -162,7 +170,7 @@ checkClusterUniformity(objCOTAN,
 objCOTAN <- addClusterization(objCOTAN, clName = "uniformClusters",
                               clusters = clusters)
 
-mergedList <- mergeUniformCellsClusters(objCOTAN,
+mergedList <- mergeUniformCellsClusters(objCOTAN, GDIThreshold = 1.5,
                                         clusters = clusters,
                                         cores = 12,
                                         distance = "cosine",
