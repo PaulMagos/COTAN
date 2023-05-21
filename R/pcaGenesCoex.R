@@ -23,10 +23,10 @@
 #'
 #' @rdname CellClustering
 #'
-pcagenesCoex <- function(objCOTAN, pcaDim,
-                        varThreshold = 1.5,
-                        idThreshold = 1.25,
-                        actCoexSpace = FALSE) {
+pcaGenesCoex <- function(objCOTAN, pcaDim,
+                         varThreshold = 1.5,
+                         idThreshold = 1.25,
+                         actCoexSpace = FALSE) {
   GDI <- calculateGDI(objCOTAN)[["GDI"]]
   GDI <- sort(GDI, decreasing = TRUE)
 
