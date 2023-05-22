@@ -19,6 +19,8 @@
 #'
 #' @export
 #'
+#' @importFrom rlang set_names
+#'
 #' @importFrom irlba prcomp_irlba
 #'
 #' @rdname CellClustering
@@ -27,7 +29,7 @@ pcaGenesCoex <- function(objCOTAN, pcaDim,
                          varThreshold = 1.5,
                          idThreshold = 1.25,
                          actCoexSpace = FALSE) {
-  GDI <- calculateGDI(objCOTAN)[["GDI"]]
+  GDI <- set_names(calculateGDI(objCOTAN)[["GDI"]], getGenes(objCOTAN))
   GDI <- sort(GDI, decreasing = TRUE)
 
   varGenes <- names(GDI[GDI >= varThreshold])
