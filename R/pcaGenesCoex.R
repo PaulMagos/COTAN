@@ -37,7 +37,8 @@ pcaGenesCoex <- function(objCOTAN, pcaDim,
 
   genesCoex <- getGenesCoex(objCOTAN, zeroDiagonal = TRUE)[idGenes, varGenes]
 
-  logThis(paste0("Genes coex dimensions: ", dim(genesCoex)), logLevel = 2)
+  logThis(paste0("Genes coex dimensions: (",
+                 paste(dim(genesCoex), collapse = ", "), ")"), logLevel = 2)
 
   logThis(paste0("GDI mean of feature genes:", mean(GDI[varGenes])),
           logLevel = 3)

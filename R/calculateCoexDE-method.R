@@ -17,8 +17,8 @@ setMethod(
     cat("data preparation..\n")
 
     # drop housekeeping genes
-    noHKFlags     <- flagNotHousekeepingGenes(objCOTAN)
-    muEstimator   <- estimateMu(objCOTAN)
+    noHKFlags     <- flagNotFullyExpressedGenes(objCOTAN)
+    muEstimator   <- calculateMu(objCOTAN)
     muEstimator   <- muEstimator[noHKFlags, ]
     zeroOneMatrix <- getZeroOneProj(objCOTAN)
     zeroOneMatrix <- zeroOneMatrix[noHKFlags, ]
@@ -37,9 +37,9 @@ setMethod(
       cat("working on set ", setName, "\n")
 
       set    <- unlist(geneSets[setName]) # needed to work with the list
-      set    <- set[!(set %in% getHousekeepingGenes(objCOTAN))]
+      set    <- set[!(set %in% getFullyExpressedGenes(objCOTAN))]
       complement <- setdiff(getGenes(objCOTAN), set) # genes not in this set
-      complement <- complement[!(complement %in% getHousekeepingGenes(objCOTAN))]
+      complement <- complement[!(complement %in% getFullyExpressedGenes(objCOTAN))]
 
       stopifnot("ERROR. Some gene in the set are not present in the COTAN object!"
                 <- all(set %in% getGenes(objCOTAN)))
