@@ -39,32 +39,36 @@ defineMetaGenes <- function(points,
 
   metaGenes <- vector(mode = "list")
 
-  pointsDist <- as.matrix(parDist(points, method = distance,
-                                  diag = TRUE, upper = TRUE))
-
-  possibleCenters <- rownames(matrixPoints)
+  possibleCenters <- rownames(points)
   if (isTRUE(permutation)) {
     possibleCenters <- sample(possibleCenters)
   }
 
+  pointsDist <- as.matrix(parDist(points, method = distance,
+                                  diag = TRUE, upper = TRUE))
+
   repeat{
     center <- possibleCenters[[1L]]
 
-    logThis(paste0("Working on center: ", center), logLevel = 3L)
+    logThis(paste0("Working on center: ", center, " - "),
+            logLevel = 3L, appendLF = FALSE)
 
     distances <- sort(pointsDist[center, ], decreasing = FALSE)
 
     numNeighbors <- sum(distances <= maxDist)
 
-    if (numNeighbors < minNum) {
-      # the current center is not used as a center
+    if (numNeighbors < minSize) {
+      # this center is too isolated
       possibleCenters <- possibleCenters[2L:length(possibleCenters)]
+      logThis("dropped", logLevel = 3L)
     } else {
       # the closest points are inserted into the set
-      namesOfClosest  <- names(head(distances, n = min(maxNum, numNeighbors)))
+      namesOfClosest  <- names(head(distances, n = min(maxSize, numNeighbors)))
       possibleCenters <- setdiff(possibleCenters, namesOfClosest)
 
       metaGenes[[center]] <- namesOfClosest
+      logThis(paste0("found ", length(namesOfClosest), " near points"),
+                     logLevel = 3L)
     }
 
     if (is_empty(possibleCenters)) {
@@ -72,6 +76,8 @@ defineMetaGenes <- function(points,
       break
     }
   }
+
+  logThis("Defining meta-genes - DONE", logLevel = 2L)
 
   return(metaGenes)
 }
