@@ -23,7 +23,7 @@
 #'
 #' @importFrom irlba prcomp_irlba
 #'
-#' @rdname CellClustering
+#' @rdname MetaGenes
 #'
 pcaGenesCoex <- function(objCOTAN, pcaDim,
                          varThreshold = 1.5,

@@ -1,8 +1,7 @@
 
 #'
-#'
-#' @details `DEAOnClusters()` is used to run the Differential Expression
-#'   analysis using the `COTAN` contingency tables on each *cluster* in the
+#' @details `DEAOnClusters()` is used to run the *Differential Expression
+#'   Analysis* using the `COTAN` contingency tables on each *cluster* in the
 #'   given *clusterization*
 #'
 #' @param objCOTAN a `COTAN` object
@@ -11,7 +10,8 @@
 #'   stored in the `COTAN` object
 #'
 #' @return `DEAOnClusters()` returns a `list` with two objects:
-#'   * "coex"    - the coexpression `data.frame` for the genes in each *cluster*
+#'   * "coex"    - the co-expression `data.frame` for the genes against each
+#'                 *cluster*
 #'   * "p-value" - the corresponding p-values `data.frame`
 #'
 #' @export

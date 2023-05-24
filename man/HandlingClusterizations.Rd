@@ -203,7 +203,8 @@ column for each \emph{cluster}.
 
 \code{DEAOnClusters()} returns a \code{list} with two objects:
 \itemize{
-\item "coex"    - the coexpression \code{data.frame} for the genes in each \emph{cluster}
+\item "coex"    - the co-expression \code{data.frame} for the genes against each
+\emph{cluster}
 \item "p-value" - the corresponding p-values \code{data.frame}
 }
 
@@ -299,8 +300,8 @@ new element in the \code{clustersCoex} \code{list} using the passed in \code{COE
 \code{data.frame} and the corresponding \code{COEX} \code{data.frame} from the
 \code{clustersCoex} \code{list}.
 
-\code{DEAOnClusters()} is used to run the Differential Expression
-analysis using the \code{COTAN} contingency tables on each \emph{cluster} in the
+\code{DEAOnClusters()} is used to run the \emph{Differential Expression
+Analysis} using the \code{COTAN} contingency tables on each \emph{cluster} in the
 given \emph{clusterization}
 
 \code{UMAPPlot()} plots the given \code{data.frame} containing genes
