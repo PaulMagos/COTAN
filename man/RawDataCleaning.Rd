@@ -128,9 +128,15 @@ updated \strong{fully-expressed} genes' information
 updated \strong{fully-expressing} cells' information
 
 \code{dropGenesCells()} returns a completely new \code{COTAN} object with the
-new raw data obtained after the indicated genes/cells were expunged. Only
-the meta-data for the data-set are kept, while the rest is dropped as no
-more relevant with the restricted matrix
+new raw data obtained after the indicated genes/cells were expunged. All
+remaining data is dropped too as no more relevant with the restricted
+matrix. Exceptions are:
+\itemize{
+\item the meta-data for the data-set that gets kept unchanged
+\item the meta-data of genes/cells that gets restricted to the remaining
+elements. The columns calculated via \code{estimate} and \code{find} methods are
+dropped too
+}
 
 \code{ECDPlot()} returns an ECD plot
 
@@ -138,11 +144,13 @@ more relevant with the restricted matrix
 
 \code{cleanPlots()} returns a \code{list} of \code{ggplot2} plots:
 \itemize{
-\item "pcaCells" is for pca cells,
-\item "pcaCellsData" is the data of the pca cells,
-\item "genes" is for cluster2 cells' group genes,
-\item "UDE" is for cell UDE,
-\item "nu" is for cell nu.
+\item \code{"pcaCells"} is for pca cells
+\item \code{"pcaCellsData"} is the data of the pca cells (can be plotted)
+\item \code{"genes"} is for \code{B} group cells' genes
+\item \code{"UDE"} is for cells' UDE against their pca
+\item \code{"nu"} is for cell \emph{nu}
+\item \code{"zoomedNu"} is the same but zoomed on the left and with an estimate
+for the low \emph{nu} threshold that defines problematic cells
 }
 
 \code{cellSizePlot()} returns the \code{violin-boxplot} plot
@@ -242,9 +250,10 @@ plot(ecdPlot)
 # This creates many infomative plots useful to determine whether
 # there is still something to drop...
 # Here we use the tuple-like assignment feature of the `zeallot` package
-c(pcaCellsPlot, ., genesPlot, UDEPlot, nuPlot ) \%<-\% cleanPlots(objCOTAN)
+c(pcaCellsPlot, ., genesPlot, UDEPlot, ., zNuPlot) \%<-\% cleanPlots(objCOTAN)
 plot(pcaCellsPlot)
 plot(UDEPlot)
+plot(zNuPlot)
 
 lsPlot <- cellSizePlot(objCOTAN)
 plot(lsPlot)

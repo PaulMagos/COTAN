@@ -41,6 +41,7 @@ mergeUniformCellsClusters(
   objCOTAN,
   clusters = NULL,
   GDIThreshold = 1.4,
+  batchSize = 10L,
   cores = 1L,
   distance = "cosine",
   hclustMethod = "ward.D2",
@@ -85,6 +86,9 @@ output will be paced in a sub-folder.}
 available \emph{clusterization} will be used, as it is probably the most
 significant!}
 
+\item{batchSize}{Number pairs to test in a single round. If none of them
+succeeds the merge stops}
+
 \item{distance}{type of distance to use (default is \code{"cosine"}, \code{"euclidean"}
 and the others from \code{\link[parallelDist:parDist]{parallelDist::parDist()}} are also available)}
 
@@ -96,8 +100,12 @@ defined by the \code{\link[stats:hclust]{stats::hclust()}} function.}
 
 \code{cellsUniformClustering()} returns the newly found \emph{clusterization}
 
-\code{checkClusterUniformity} returns \code{TRUE} when the \emph{cluster} is
-\strong{uniform}, \code{FALSE} otherwise.
+\code{checkClusterUniformity} returns a list with:
+\itemize{
+\item \code{"isUniform"}: a flag indicating whether the \emph{cluster} is \strong{uniform}
+\item \code{"fractionAbove"}: the percentage of genes with \code{GDI} above the threshold
+\item \code{"1stPercentile"}: the quantile associated to the highest percentile
+}
 
 a \code{list} with "clusters", "coexDF" and "pValueDF"
 }
@@ -130,10 +138,10 @@ too high for too many genes, the \emph{cluster} is deemed \strong{non-uniform}.
 \code{mergeUniformCellsClusters()} takes in a \strong{uniform}
 \emph{clusterization} and iteratively checks whether merging two \emph{near clusters}
 would form a \strong{uniform} \emph{cluster} still. This function uses the \emph{cosine
-distance} and the \code{\link[stats:hclust]{stats::hclust()}} function to establish \emph{near clusters
-pairs}. It will use the \code{\link[=checkClusterUniformity]{checkClusterUniformity()}} function to check
-whether the merged \emph{clusters} are \strong{uniform}. The function will stop once
-no \emph{near pairs} of clusters are mergeable.
+distance} to establish the \emph{nearest clusters pairs}. It will use the
+\code{\link[=checkClusterUniformity]{checkClusterUniformity()}} function to check whether the merged \emph{clusters}
+are \strong{uniform}. The function will stop once no \emph{near pairs} of clusters
+are mergeable in a single batch
 }
 \examples{
 data("test.dataset")
@@ -142,7 +150,7 @@ objCOTAN <- automaticCOTANObjectCreation(raw = test.dataset,
                                          GEO = "S",
                                          sequencingMethod = "10X",
                                          sampleCondition = "Test",
-                                         cores = 12,
+                                         cores = 12L,
                                          saveObj = FALSE)
 
 groupMarkers <- list(G1 = c("g-000010", "g-000020", "g-000030"),
@@ -161,23 +169,29 @@ plot(gdiPlot)
 clusters <- cellsUniformClustering(objCOTAN, cores = 12,
                                    GDIThreshold = 1.5, saveObj = FALSE)
 
-checkClusterUniformity(objCOTAN, GDIThreshold = 1.5,
-                       cluster = clusters[1],
-                       cells = getCells(objCOTAN)[clusters \%in\% clusters[1]],
-                       cores = 12,
+firstCluster <- getCells(objCOTAN)[clusters \%in\% clusters[[1L]]]
+checkClusterUniformity(objCOTAN,
+                       GDIThreshold = 1.5,
+                       cluster = clusters[[1L]],
+                       cells = firstCluster,
+                       cores = 12L,
                        saveObj = FALSE)
 
-objCOTAN <- addClusterization(objCOTAN, clName = "uniformClusters",
+objCOTAN <- addClusterization(objCOTAN,
+                              clName = "split",
                               clusters = clusters)
 
-mergedList <- mergeUniformCellsClusters(objCOTAN, GDIThreshold = 1.5,
+mergedList <- mergeUniformCellsClusters(objCOTAN,
+                                        GDIThreshold = 1.5,
+                                        batchSize = 5L,
                                         clusters = clusters,
-                                        cores = 12,
+                                        cores = 12L,
                                         distance = "cosine",
                                         hclustMethod = "ward.D2",
                                         saveObj = FALSE)
 
-objCOTAN <- addClusterization(objCOTAN, clName = "mergedUniformClusters",
+objCOTAN <- addClusterization(objCOTAN,
+                              clName = "merged",
                               clusters = mergedList[["clusters"]],
                               coexDF = mergedList[["coexDF"]])
 
