@@ -169,6 +169,9 @@ genesCoexSpace <-
 #'
 #' @importFrom assertthat assert_that
 #'
+#' @importFrom zeallot `%<-%`
+#' @importFrom zeallot `%->%`
+#'
 #' @examples
 #' groupMarkers <- list(G1 = c("g-000010", "g-000020", "g-000030"),
 #'                      G2 = c("g-000300", "g-000330"),
@@ -204,7 +207,7 @@ establishGenesClusters <-
                    numGenesPerMarker = numGenesPerMarker,
                    primaryMarkers = primaryMarkers)
 
-  GCSPca <- prcomp_irlba(GCS, n = 10, center = TRUE, scale. = FALSE)
+  GCSPca <- prcomp_irlba(GCS, n = 10L, center = TRUE, scale. = FALSE)
   rownames(GCSPca[["x"]]) <- rownames(GCS)
 
   SMRelevance <- matrix(nrow = length(secondaryMarkers),

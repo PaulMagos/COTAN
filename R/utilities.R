@@ -105,7 +105,8 @@ logThis <- function(msg, logLevel = 2L, appendLF = TRUE) {
   currentFile <- getOption("COTAN.LogFile")
   if (!is.null(currentFile)) {
     tryCatch({
-      writeLines(msg, currentFile)
+      if (isTRUE(appendLF)) { sep <- "\n" } else { sep <- "" }
+      writeLines(msg, currentFile, sep = sep)
       flush(currentFile)
     }, error = function(e) {
       setLoggingFile("")
@@ -491,7 +492,7 @@ groupByClustersList <- function(elemNames, clustersList,
   }
 
   # add all non-clustered elements as tail group!
-  positions <- append(positions, setdiff(seq_len(length(elemNames)), positions))
+  positions <- append(positions, setdiff(seq_along(elemNames), positions))
 
   return(positions)
 }

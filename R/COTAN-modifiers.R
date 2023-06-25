@@ -227,17 +227,17 @@ setMethod(
                 msg = paste0("Asked to drop genes and/or cells",
                              " that were not present in the 'COTAN' object"))
 
-    if (length(genes) == 0 && length(cells) == 0) {
+    if (length(genes) == 0L && length(cells) == 0L) {
       logThis("Asked to drop no genes or cells", logLevel = 2L)
     } else {
       logThis(paste("Asked to drop", length(genes), "genes and",
-                    length(cells), "cells"), logLevel = 3)
+                    length(cells), "cells"), logLevel = 3L)
     }
 
     genesPosToKeep <- which(!(getGenes(objCOTAN) %in% genes))
     cellsPosToKeep <- which(!(getCells(objCOTAN) %in% cells))
 
-    assert_that((length(genesPosToKeep) != 0 && length(cellsPosToKeep) != 0),
+    assert_that((length(genesPosToKeep) != 0L && length(cellsPosToKeep) != 0L),
                 msg = "Asked to drop all genes and/or cells")
 
     # As all estimates would be wrong, a completely new object is created
@@ -350,12 +350,14 @@ setMethod(
 #'
 #' @param objCOTAN a `COTAN` object
 #' @param clName the name of an existing *clusterization*
-#' @param coexDF a `data.frame` where each column indicates the `COEX` for all,
-#'   or just some of, the clusters of the *clusterization*
+#' @param coexDF a `data.frame` where each column indicates the `COEX` for each
+#'   of the *clusters* of the *clusterization*
 #'
 #' @returns `addClusterizationCoex()` returns the updated `COTAN` object
 #'
 #' @export
+#'
+#' @importFrom assertthat assert_that
 #'
 #' @rdname HandlingClusterizations
 #'
@@ -363,14 +365,19 @@ setMethod(
   "addClusterizationCoex",
   "COTAN",
   function(objCOTAN, clName, coexDF) {
-    if (!isa(coexDF, "data.frame")) {
-      stop("'clusterCoex' is supposedly composed of data.frames.",
-           " A '", class(coexDF), "' was given instead for clusterization '",
-           clName, "'.")
-    }
+    assert_that(isa(coexDF, "data.frame"),
+                msg = paste0("'clusterCoex' is supposedly composed ",
+                             "of data.frames. A '", class(coexDF),
+                             "' was given instead for clusterization '",
+                             clName, "'"))
 
     internalName <- getClusterizationName(objCOTAN, clName = clName,
                                           keepPrefix = TRUE)
+
+    assert_that(setequal(colnames(coexDF),
+                         getClusters(objCOTAN, clName = internalName)),
+                msg = paste0("The column names of passed data.frame does not
+                             match the expected list of clusters"))
 
     # this should not add any new elements to the list!
     objCOTAN@clustersCoex[[internalName]] <- coexDF

@@ -1,3 +1,37 @@
+## COTAN 2.1.6
+
+Added function `reorderClusterization()`: it reorders the given *clusterization*
+so that *near clusters* have also *near labels*
+
+The functions `cellsUniformClustering()` and `mergeUniformCellsClusters()` now
+return the result of this new function
+
+Separated p-value calculations from `DEAOnClusters()` into the new function
+`pValueFromDEA()`. Those `data.frames` are no longer part of the list returned
+by the functions `DEAOnClusters()` and `mergeUniformCellsClusters()`
+
+Added function `getClusters()` to retrieve the wanted clusterization from the
+cells' meta-dataset
+
+Added function `calculateGenesCE()`: it returns the cross-entropy between
+the expected absence of ritzs reading against the observed state
+
+Fixed minor issue with `logThis()` to file: it was always appending a new line
+even when `appendLF` was set to `FALSE`
+
+Now `checkClusterUniformity()` returns more GDI stats like the percentage of
+genes above threshold or the last percentile of the GDI values
+
+Revamped `mergeUniformCellsClusters()` to select in order all the the most
+likely candidates pairs of clusters to merge. Provided new user parameter to
+balance the merging of most possible candidates versus the time spent doing so
+
+Improved `dropGenesCells()` method: it now retains all meta-data information
+that is not related to the results of the other methods
+
+Added zoomed UDE plot to `cleanPlots()` return. It suggests a possible
+cut level for low UDE cells
+
 ## COTAN 2.1.5
 
 Improved `mergeUniformCellsClusters()`: now it attempts to merge more

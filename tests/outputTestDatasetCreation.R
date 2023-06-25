@@ -1,7 +1,9 @@
 
 # Creates the files to be reloaded by the tests for comparisons
+library(zeallot)
 
-outputTestDatasetCreation <- function(testsDir = "tests/testthat") {
+outputTestDatasetCreation <- function(testsDir = file.path("tests",
+                                                           "testthat")) {
   utils::data("test.dataset", package = "COTAN")
   options(parallelly.fork.enable = TRUE)
 
@@ -43,19 +45,22 @@ outputTestDatasetCreation <- function(testsDir = "tests/testthat") {
   GDIThreshold <- 1.5
 
   clusters <- cellsUniformClustering(obj, GDIThreshold = GDIThreshold,
-                                     cores = 12L, saveObj = FALSE)
+                                     cores = 12L, saveObj = FALSE)[["clusters"]]
   saveRDS(clusters, file.path(testsDir, "clusters1.RDS"))
 
-  c(coexDF, pvalDF) %<-% DEAOnClusters(obj, clusters = clusters)
+  coexDF <- DEAOnClusters(obj, clusters = clusters)
   obj <- addClusterization(obj, clName = "clusters",
                            clusters = clusters, coexDF = coexDF)
 
   saveRDS(coexDF[genes.names.test, ],
           file.path(testsDir, "coex.test.cluster1.RDS"))
+
+  pvalDF <- pValueFromDEA(coexDF, getNumCells(obj))
+
   saveRDS(pvalDF[genes.names.test, ],
           file.path(testsDir, "pval.test.cluster1.RDS"))
 
-  c(mergedClusters, mCoexDF, mPValueDf) %<-%
+  c(mergedClusters, mCoexDF) %<-%
     mergeUniformCellsClusters(objCOTAN = obj,
                               clusters = NULL,
                               GDIThreshold = GDIThreshold,

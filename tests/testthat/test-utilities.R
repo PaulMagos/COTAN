@@ -14,7 +14,7 @@ test_that("Logging", {
   expect_true(file.exists(logPath))
 
   expect_no_message(suppressMessages(logThis("This should not appear",
-                                             logLevel = 0L)))
+                                             logLevel = 0L, appendLF = FALSE)))
 
   expect_message(   logThis("This should appear",     logLevel = 0L))
   expect_no_message(logThis("This should not appear", logLevel = 1L))
@@ -33,7 +33,7 @@ test_that("Logging", {
   suppressMessages(setLoggingLevel(currentLevel))
   suppressMessages(setLoggingFile(""))
 
-  expect_equal(R.utils::countLines(logPath), 6L, ignore_attr = TRUE)
+  expect_equal(R.utils::countLines(logPath), 5L, ignore_attr = TRUE)
   file.remove(logPath)
 })
 
@@ -92,11 +92,11 @@ test_that("Clusterizations manipulations", {
   expect_identical(min(nchar(factorToVector(niceClusters))), 3L)
   expect_true(all(endsWith(factorToVector(niceClusters), clusters)))
 
-  levels(niceClusters) <- c(1:3, 11:13, 100)
+  levels(niceClusters) <- c(1L:3L, 11L:13L, 100L)
   niceClusters <- niceFactorLevels(niceClusters)
   expect_identical(max(nchar(factorToVector(niceClusters))), 3L)
   expect_identical(min(nchar(factorToVector(niceClusters))), 3L)
-  expect_setequal(as.integer(levels(niceClusters)), c(1:3, 11:13, 100))
+  expect_setequal(as.integer(levels(niceClusters)), c(1L:3L, 11L:13L, 100L))
 })
 
 
