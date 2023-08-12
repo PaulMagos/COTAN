@@ -1,3 +1,16 @@
+## COTAN 2.1.7
+
+Added new flag to the function `cleanPlots()` to suppress evaluation of the
+*PCA* on the normalized data. In particular, this allows to reduce significantly
+time spent within the function `checkClusterUniformity()`
+
+Added `initialResolution` parameter to `cellsUniformClustering()`: it allows
+users to specify the initial resolution used in the calls to
+`Seurat::FindClusters()` method. It now uses the same default as Seurat
+
+Added new method `estimateNuLinearByCluster()` that calculates `nu` ensuring
+that its average is 1.0 in each given cluster
+
 ## COTAN 2.1.6
 
 Added function `reorderClusterization()`: it reorders the given *clusterization*
@@ -14,7 +27,7 @@ Added function `getClusters()` to retrieve the wanted clusterization from the
 cells' meta-dataset
 
 Added function `calculateGenesCE()`: it returns the cross-entropy between
-the expected absence of ritzs reading against the observed state
+the expected absence of a gene reading against the observed state
 
 Fixed minor issue with `logThis()` to file: it was always appending a new line
 even when `appendLF` was set to `FALSE`
