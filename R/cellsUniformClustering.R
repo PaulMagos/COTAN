@@ -253,37 +253,41 @@ cellsUniformClustering <- function(objCOTAN,  GDIThreshold = 1.4,
     numClustersToRecluster <- 0L
     cellsToRecluster <- vector(mode = "character")
     sratClusters <- levels(factor(metaData[["seurat_clusters"]]))
-    for (cl in sratClusters) {
-      logThis("*", logLevel = 1L, appendLF = FALSE)
-      logThis(paste0(" checking uniformity of cluster '", cl,
-                     "' of ", length(sratClusters), " clusters"), logLevel = 2L)
-      if (cl != "singleton") {
-        cells <- rownames(metaData[metaData[["seurat_clusters"]] == cl, ])
-        if (length(cells) < 10L) {
-          logThis(paste("cluster", cl, "has too few cells:",
-                        "will be reclustered!"), logLevel = 1L)
-          cellsToRecluster <- c(cellsToRecluster, cells)
-        } else {
-          clusterIsUniform <-
-            checkClusterUniformity(objCOTAN = objCOTAN,
-                                   cluster = cl,
-                                   cells = cells,
-                                   cores = cores,
-                                   GDIThreshold = GDIThreshold,
-                                   saveObj = saveObj,
-                                   outDir = outDirIter)[["isUniform"]]
-          if (!clusterIsUniform) {
-            logThis(paste("cluster", cl, "has too high GDI:",
-                          "will be reclustered!"), logLevel = 1L)
 
-            numClustersToRecluster <- numClustersToRecluster + 1L
-            cellsToRecluster <- c(cellsToRecluster, cells)
-          } else {
-            logThis(paste("cluster", cl, "is uniform"), logLevel = 1L)
-          }
-        }
-      }
-    }
+    # for (cl in sratClusters) {
+    #   logThis("*", logLevel = 1L, appendLF = FALSE)
+    #   logThis(paste0(" checking uniformity of cluster '", cl,
+    #                  "' of ", length(sratClusters), " clusters"), logLevel = 2L)
+    #   if (cl != "singleton") {
+    #     cells <- rownames(metaData[metaData[["seurat_clusters"]] == cl, ])
+    #     if (length(cells) < 10L) {
+    #       logThis(paste("cluster", cl, "has too few cells:",
+    #                     "will be reclustered!"), logLevel = 1L)
+    #       cellsToRecluster <- c(cellsToRecluster, cells)
+    #     } else {
+    #       clusterIsUniform <-
+    #         checkClusterUniformity(objCOTAN = objCOTAN,
+    #                                cluster = cl,
+    #                                cells = cells,
+    #                                cores = cores,
+    #                                GDIThreshold = GDIThreshold,
+    #                                saveObj = saveObj,
+    #                                outDir = outDirIter)[["isUniform"]]
+    #       if (!clusterIsUniform) {
+    #         logThis(paste("cluster", cl, "has too high GDI:",
+    #                       "will be reclustered!"), logLevel = 1L)
+
+    #         numClustersToRecluster <- numClustersToRecluster + 1L
+    #         cellsToRecluster <- c(cellsToRecluster, cells)
+    #       } else {
+    #         logThis(paste("cluster", cl, "is uniform"), logLevel = 1L)
+    #       }
+    #     }
+    #   }
+    # }
+
+
+    mclapply(cl, cells, sratClusters, objCOTAN, cores, GDIThreshold, saveObj, outDirIter, numClustersToRecluster, f)
     logThis("", logLevel = 1L)
     logThis(paste("Found", length(sratClusters) - numClustersToRecluster,
                   "uniform and ", numClustersToRecluster,
@@ -383,4 +387,37 @@ cellsUniformClustering <- function(objCOTAN,  GDIThreshold = 1.4,
   logThis("Creating cells' uniform clustering: DONE", logLevel = 2L)
 
   return(list("clusters" = factor(outputClusters), "coex" = outputCoexDF))
+}
+
+
+f <- function(cl, cells, sratClusters, objCOTAN, cores, GDIThreshold, saveObj, outDirIter, numClustersToRecluster){
+    logThis("*", logLevel = 1L, appendLF = FALSE)
+    logThis(paste0(" checking uniformity of cluster '", cl,
+                    "' of ", length(sratClusters), " clusters"), logLevel = 2L)
+    if (cl != "singleton") {
+      cells <- rownames(metaData[metaData[["seurat_clusters"]] == cl, ])
+      if (length(cells) < 10L) {
+        logThis(paste("cluster", cl, "has too few cells:",
+                      "will be reclustered!"), logLevel = 1L)
+        cellsToRecluster <- c(cellsToRecluster, cells)
+      } else {
+        clusterIsUniform <-
+          checkClusterUniformity(objCOTAN = objCOTAN,
+                                  cluster = cl,
+                                  cells = cells,
+                                  cores = cores,
+                                  GDIThreshold = GDIThreshold,
+                                  saveObj = saveObj,
+                                  outDir = outDirIter)[["isUniform"]]
+        if (!clusterIsUniform) {
+          logThis(paste("cluster", cl, "has too high GDI:",
+                        "will be reclustered!"), logLevel = 1L)
+
+          numClustersToRecluster <- numClustersToRecluster + 1L
+          cellsToRecluster <- c(cellsToRecluster, cells)
+        } else {
+          logThis(paste("cluster", cl, "is uniform"), logLevel = 1L)
+        }
+      }
+    }
 }
